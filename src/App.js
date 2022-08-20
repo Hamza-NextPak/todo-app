@@ -89,6 +89,7 @@ export default function App() {
     setButtonType("Create Task");
     setEditIndex(-1);
     setOpened(false);
+    setButtonDisable(true);
 
   }
   function loadTasks() {
