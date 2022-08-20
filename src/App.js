@@ -10,36 +10,52 @@ import {
   ActionIcon,
 } from "@mantine/core";
 import { useState, useRef, useEffect } from "react";
-import { Trash } from "tabler-icons-react";
+import { Edit, Trash } from "tabler-icons-react";
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [opened, setOpened] = useState(false);
+  const [buttonDisable, setButtonDisable] = useState(true);
+  const [buttonType, setButtonType] = useState("Create Task");
+  const [titleError, setTitleError] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editSummary, setEditSummary] = useState("");
+  const [editIndex, setEditIndex] = useState(-1);
 
   const taskTitle = useRef("");
   const taskSummary = useRef("");
 
   function createTask() {
-    setTasks([
-      ...tasks,
-      {
-        title: taskTitle.current.value,
-        summary: taskSummary.current.value,
-      },
-    ]);
+    if (editIndex !== -1) {
+      endEdit();
+      return;
+    } else if (taskTitle.current.value !== "") {
+      setTasks([
+        ...tasks,
+        {
+          title: taskTitle.current.value,
+          summary: taskSummary.current.value,
+        },
+      ]);
+      setOpened(false);
+      setButtonDisable(true);
 
-    saveTasks([
-      ...tasks,
-      {
-        title: taskTitle.current.value,
-        summary: taskSummary.current.value,
-      },
-    ]);
+      // saveTasks([
+      //   ...tasks,
+      //   {
+      //     title: taskTitle.current.value,
+      //     summary: taskSummary.current.value,
+      //   },
+      // ]);
+    } else {
+      setButtonDisable(true);
+      setTitleError("Enter Task title");
+    }
   }
 
-  function saveTasks(tasks) {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }
+  // function saveTasks(tasks) {
+  //   localStorage.setItem("tasks", JSON.stringify(tasks));
+  // }
 
   function deleteTask(index) {
     var clonedTasks = [...tasks];
@@ -48,9 +64,33 @@ export default function App() {
 
     setTasks(clonedTasks);
 
-    saveTasks([...clonedTasks]);
+    // saveTasks([...clonedTasks]);
   }
+  function startEdit(index) {
+    var stringData = tasks[index].title;
+    setEditTitle(stringData);
+    stringData = tasks[index].summary;
+    setEditSummary(stringData);
+    setButtonType("Edit task");
+    setEditIndex(index);
+    setOpened(true);
+  }
+  function endEdit() {
+    var clonedTasks = [...tasks];
 
+    clonedTasks[editIndex] = {
+      ...tasks[editIndex],
+      title: taskTitle.current.value,
+      summary: taskSummary.current.value,
+    };
+    setTasks(clonedTasks);
+    setEditTitle("");
+    setEditSummary("");
+    setButtonType("Create Task");
+    setEditIndex(-1);
+    setOpened(false);
+
+  }
   function loadTasks() {
     let loadedTasks = localStorage.getItem("tasks");
 
@@ -81,6 +121,9 @@ export default function App() {
           mt={"md"}
           ref={taskTitle}
           placeholder={"Task Title"}
+          onChange={() => setButtonDisable(false)}
+          error={titleError}
+          defaultValue={editTitle}
           required
           label={"Title"}
         />
@@ -89,6 +132,7 @@ export default function App() {
           mt={"md"}
           placeholder={"Task Summary"}
           label={"Summary"}
+          defaultValue={editSummary}
         />
         <Group mt={"md"} position={"apart"}>
           <Button
@@ -100,12 +144,12 @@ export default function App() {
             Cancel
           </Button>
           <Button
+            disabled={buttonDisable}
             onClick={() => {
               createTask();
-              setOpened(false);
             }}
           >
-            Create Task
+            {buttonType}
           </Button>
         </Group>
       </Modal>
@@ -136,6 +180,15 @@ export default function App() {
                       variant={"transparent"}
                     >
                       <Trash />
+                    </ActionIcon>
+                    <ActionIcon
+                      onClick={() => {
+                        startEdit(index);
+                      }}
+                      color={"blue"}
+                      variant={"transparent"}
+                    >
+                      <Edit />
                     </ActionIcon>
                   </Group>
                   <Text color={"dimmed"} size={"md"} mt={"sm"}>
