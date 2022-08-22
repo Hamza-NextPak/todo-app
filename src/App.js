@@ -130,6 +130,7 @@ export default function App() {
           ref={taskSummary}
           mt={"md"}
           placeholder={"Task Summary"}
+          onChange={() => setButtonDisable(false)}
           label={"Summary"}
           defaultValue={editSummary}
         />
@@ -206,8 +207,8 @@ export default function App() {
         )}
         <Button
           onClick={() => {
-            setEditTitle('')
-            setEditSummary('');
+            setEditTitle("");
+            setEditSummary("");
             setOpened(true);
           }}
           fullWidth
