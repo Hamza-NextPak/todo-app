@@ -206,8 +206,8 @@ export default function App() {
         )}
         <Button
           onClick={() => {
-            setEditTitle='';
-            setEditSummary='';
+            setEditTitle('')
+            setEditSummary('');
             setOpened(true);
           }}
           fullWidth
