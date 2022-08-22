@@ -10,7 +10,7 @@ import {
   ActionIcon,
 } from "@mantine/core";
 import { useState, useRef, useEffect } from "react";
-import { Edit, Trash } from "tabler-icons-react";
+import { Edit, Trash} from "tabler-icons-react";
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
@@ -63,8 +63,6 @@ export default function App() {
     clonedTasks.splice(index, 1);
 
     setTasks(clonedTasks);
-
-    // saveTasks([...clonedTasks]);
   }
   function startEdit(index) {
     var stringData = tasks[index].title;
@@ -110,7 +108,7 @@ export default function App() {
     <div className="App">
       <Modal
         opened={opened}
-        size={"xl"}
+        size={"md"}
         title={"New Task"}
         withCloseButton={true}
         onClose={() => {
@@ -208,6 +206,8 @@ export default function App() {
         )}
         <Button
           onClick={() => {
+            setEditTitle='';
+            setEditSummary='';
             setOpened(true);
           }}
           fullWidth
